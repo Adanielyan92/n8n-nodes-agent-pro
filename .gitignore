@@ -1,0 +1,31 @@
+# Build output
+dist/
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+
+# Packed tarballs
+*.tgz
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Claude Code local state
+.claude/
+memory/
+
+# Logs / env
+.env
+.env.local
+*.log
+npm-debug.log*
+
+# Private / local-only documentation
+# These folders contain domain-specific notes, plans, and prompt material
+# that lives alongside the code but is not part of the published package.
+docs/*
