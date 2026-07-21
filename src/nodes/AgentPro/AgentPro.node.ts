@@ -303,6 +303,25 @@ export class AgentPro implements INodeType {
 						default: false,
 						description: 'Whether to auto-attach all binary items (PDFs + images)',
 					},
+					// -- Document fetch (tool → vision) --
+					{
+						displayName: 'Document Catalog (JSON)',
+						name: 'documentCatalog',
+						type: 'string',
+						typeOptions: { rows: 3 },
+						default: '',
+						description:
+							'JSON array of documents a connected fetch tool may retrieve into vision. Rendered into the user message so the model knows what it can fetch. Example: [{"id":"att_1","name":"ref.pdf","role_hint":"reprint reference"}].',
+					},
+					{
+						displayName: 'Max Document Fetches',
+						name: 'maxDocumentFetches',
+						type: 'number',
+						typeOptions: { minValue: 1, maxValue: 10 },
+						default: 3,
+						description:
+							'Maximum number of documents a connected tool may fetch into vision per run (de-duplicated by file name).',
+					},
 					// -- Include Raw Response --
 					{
 						displayName: 'Include Raw Response',
@@ -638,6 +657,17 @@ export class AgentPro implements INodeType {
 					const tempOverrideForTools = (options.temperatureOverride ?? -1) as number;
 					const maxTokOverrideForTools = (options.maxTokensOverride ?? -1) as number;
 
+					const documentCatalogForTools = (options.documentCatalog || '') as string;
+					const maxDocumentFetchesForTools = (options.maxDocumentFetches ?? 3) as number;
+					// Caching config (the tools path previously applied none). Declared
+					// inside this if-block so it does not collide with the direct path's
+					// own declarations later in execute().
+					const promptCachingForTools = (options.promptCaching ?? true) as boolean;
+					const cacheSystemForTools = (options.cacheSystem ?? true) as boolean;
+					const cacheSystemTtlForTools = (options.cacheSystemTtl ?? '5m') as '5m' | '1h';
+					const cacheUserMessageForTools = (options.cacheUserMessage ?? false) as boolean;
+					const cacheUserMessageTtlForTools = (options.cacheUserMessageTtl ?? '5m') as '5m' | '1h';
+
 					// systemPrompt already includes parser format instructions (appended
 					// above where externalParser is loaded), so we don't pass them again
 					// via the formatInstructions opt — that would duplicate them.
@@ -656,6 +686,13 @@ export class AgentPro implements INodeType {
 						temperature: tempOverrideForTools >= 0 ? tempOverrideForTools : undefined,
 						maxTokens: maxTokOverrideForTools > 0 ? maxTokOverrideForTools : undefined,
 						providerTag: providerTagForTools,
+						documentCatalog: documentCatalogForTools,
+						maxDocumentFetches: maxDocumentFetchesForTools,
+						promptCaching: promptCachingForTools,
+						cacheSystem: cacheSystemForTools,
+						cacheSystemTtl: cacheSystemTtlForTools,
+						cacheUserMessage: cacheUserMessageForTools,
+						cacheUserMessageTtl: cacheUserMessageTtlForTools,
 					});
 
 					let finalText = agentResult.text;
@@ -701,6 +738,9 @@ export class AgentPro implements INodeType {
 										temperature: tempOverrideForTools >= 0 ? tempOverrideForTools : undefined,
 										maxTokens: maxTokOverrideForTools > 0 ? maxTokOverrideForTools : undefined,
 										providerTag: providerTagForTools,
+										promptCaching: promptCachingForTools,
+										cacheSystem: cacheSystemForTools,
+										cacheSystemTtl: cacheSystemTtlForTools,
 									});
 									try {
 										parsedOutput = await externalParser.parse(fixResult.text);
@@ -737,6 +777,9 @@ export class AgentPro implements INodeType {
 									temperature: tempOverrideForTools >= 0 ? tempOverrideForTools : undefined,
 									maxTokens: maxTokOverrideForTools > 0 ? maxTokOverrideForTools : undefined,
 									providerTag: providerTagForTools,
+									promptCaching: promptCachingForTools,
+									cacheSystem: cacheSystemForTools,
+									cacheSystemTtl: cacheSystemTtlForTools,
 								});
 								parseResult = parseOutput(fixResult.text, outputFormat, outputSchema);
 								if (parseResult.success) finalText = fixResult.text;

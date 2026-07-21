@@ -16,6 +16,7 @@ n8n's official `@n8n/nodes-langchain` Tools Agent is excellent, but it has a few
 - The system prompt is a single free-text field, with no structured sections (Role / Rules / Instructions / Context / Output Format).
 - There is no built-in **auto-fix** loop for JSON / schema-constrained output.
 - Anthropic prompt caching is not exposed.
+- A **tool that downloads a document** (a PDF/image proof, a reference file) cannot get it into the model's *visual* context — tool results are text-only, so the model never actually sees the file.
 
 **Agent Pro** keeps full compatibility with n8n's sub-node ecosystem (Chat Model, Memory, Tools, Output Parser) and adds the features above on top.
 
@@ -41,14 +42,20 @@ This is, to our knowledge, the simplest path to using a Claude Max subscription 
 
 ### Core
 - **Sub-node architecture**: connect any LangChain `Chat Model`, `Memory`, `Tool`, and `Output Parser` sub-node — same UX as the native AI Agent.
-- **Fallback model**: toggle on `Enable Fallback Model` and a second chat model input appears. If the primary call throws, LangChain's `withFallbacks()` runnable retries with the fallback automatically.
-- **Tools agent**: full LangChain `createToolCallingAgent` loop with configurable max iterations.
+- **Fallback model**: toggle on `Enable Fallback Model` and a second chat model input appears. If the primary model fails, Agent Pro retries on the fallback automatically (per-invoke on the tools path; a failed primary call falls through to the fallback on the direct path).
+- **Tools agent**: a hand-rolled LangChain tool-calling loop — `model.bindTools().invoke()` over a `BaseMessage[]`, the same machinery `createToolCallingAgent` wraps — with configurable max iterations. Because the node owns the message array, a tool can hand a document back into the model's visual context (see **On-demand document fetch** below).
 - **Direct API path**: when the connected model exposes its API key, Agent Pro bypasses LangChain and calls the provider directly — enabling features below.
 
 ### Multimodal
 - Native **PDF** support for Anthropic (sent as `document` blocks, not text markers).
 - Native **image** support across all providers (Anthropic, OpenAI, Gemini).
 - Per-execution control via `Binary Document Properties` (comma-separated) or `Pass All Binary Data`.
+
+### On-demand document fetch (tool → vision)
+- A connected **tool can return a document** (PDF or image) that Agent Pro injects into the conversation as a real vision content block — so the model *reads* it on the next turn instead of receiving stringified bytes. The tool signals this by returning an `__agentProDocument` marker payload (`{ __agentProDocument: true, mediaType, fileName, data: <base64>, note? }`, accepted as an object, a JSON string, or a `data:` URI). Use a **structured** tool (e.g. a Code Tool or sub-workflow tool) so it can download with credentials and base64-encode the bytes.
+- **Document Catalog** option: supply a JSON array of the fetchable documents and Agent Pro renders it into the user message, so the model can pick the correct reference to fetch. Kept out of the cached system prompt so it can vary per run.
+- **Max Document Fetches** cap (default 3) with de-duplication, a size guardrail, and **graceful over-limit handling**: a PDF that exceeds Anthropic's size/100-page limit is dropped with a note the model can act on, rather than crashing the run.
+- Images inject as `image_url` blocks (all providers); PDFs as native Anthropic `document` blocks (non-Anthropic providers get a graceful text marker). Every `tool_use` is still answered by a `tool_result`.
 
 ### Structured prompting
 - Five distinct system-prompt sections: **Role**, **Rules**, **Instructions / Skills**, **Context**, **Output Format**. Each renders as a clearly-delimited block.
@@ -85,7 +92,7 @@ Then restart n8n. The node appears under **AI → Agents → Agent Pro**.
 ### From a local tarball
 
 ```bash
-npm install /path/to/n8n-nodes-agent-pro-3.3.17.tgz
+npm install /path/to/n8n-nodes-agent-pro-3.4.0.tgz
 ```
 
 Useful for testing pre-release builds.

@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented here. Format roughly follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [3.4.0] – 2026-07-08
+
+### Added
+- **On-demand document fetch → vision-read.** A connected tool can now return a document (PDF or image) that the node injects into the conversation as a real vision content block, so the model actually reads it on the next turn instead of receiving stringified bytes. A tool signals this by returning an `__agentProDocument` marker payload (`{ __agentProDocument: true, mediaType, fileName, data: <base64>, note? }`), accepted as an object, a JSON string, or a bare `data:` URI. Images are delivered via `image_url` blocks (all providers); PDFs via native Anthropic `document` blocks (non-Anthropic providers get a graceful text marker). New `src/nodes/AgentPro/documentInjection.ts`.
+- **Document Catalog option.** A JSON array (`Options → Document Catalog`) listing the documents a fetch tool may retrieve, rendered into the user message so the model can choose which reference to fetch. Kept out of the (cached) system prompt so it can vary per run.
+- **Max Document Fetches option** (default 3) — per-run cap on tool-fetched documents, with de-duplication by file name.
+
+### Changed
+- **Tools path re-implemented as a manual LangChain tool-calling loop.** Replaced `AgentExecutor`/`createToolCallingAgent` with a hand-rolled loop over `BaseMessage[]` using `model.bindTools().invoke()` — the same LangChain machinery `createToolCallingAgent` wraps — so a tool-fetched document can be delivered as a follow-up user message (an `AgentExecutor` gives no hook for this). Every `tool_use` is still answered by a `tool_result`; PDF `document` blocks are never placed inside a `tool_result` (Anthropic rejects that). Public `runToolsAgent` signature and output shape are unchanged; the no-tools direct path is untouched.
+- **System-prompt caching now applies on the tools path.** Previously only the no-tools direct path cached the system prompt; once a fetch tool is connected the agent runs on the tools path, which now applies Anthropic `cache_control` to the system block (gated on `Cache System Prompt`).
+
+### Fixed
+- **Graceful over-limit handling for fetched documents.** Oversized documents (>20 MB decoded) are rejected before sending with a readable tool-error the model can act on. A document that passes the byte cap but exceeds Anthropic's 100-page/size limit at the API is caught on the follow-up call: the injected document is dropped, the model is handed an override note ("could not be loaded… proceed with available proofs or request a page range"), and the run continues instead of crashing. Document (page/size) errors are routed to this handler and deliberately do **not** trigger the fallback model.
+
 ## [3.3.19] – 2026-06-19
 
 ### Changed

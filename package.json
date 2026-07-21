@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-agent-pro",
-  "version": "3.3.19",
+  "version": "3.4.0",
   "description": "Advanced AI Agent node for n8n with native PDF/image support, structured prompts, fallback models, prompt caching, and provider-agnostic sub-node architecture.",
   "keywords": [
     "n8n-community-node-package",
@@ -37,6 +37,8 @@
     "build": "tsc && copyfiles -u 1 \"src/**/*.svg\" dist/",
     "dev": "tsc --watch",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "tsc --noEmit",
     "lint:eslint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
@@ -63,7 +65,8 @@
     "n8n-core": "^1.70.0",
     "n8n-workflow": "^1.70.0",
     "prettier": "^3.3.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.9"
   },
   "engines": {
     "node": ">=18.10"
