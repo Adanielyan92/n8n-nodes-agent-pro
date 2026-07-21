@@ -85,7 +85,7 @@ export class AgentPro implements INodeType {
 				AI: ['Agents'],
 			},
 			resources: {
-				primaryDocumentation: [{ url: 'https://github.com/anthropics/n8n-nodes-agent-pro' }],
+				primaryDocumentation: [{ url: 'https://github.com/Adanielyan92/n8n-nodes-agent-pro#readme' }],
 			},
 		},
 

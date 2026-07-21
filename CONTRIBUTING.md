@@ -8,8 +8,8 @@ Roughly in priority order:
 
 1. **Additional provider adapters.** Today the direct API path covers Anthropic, OpenAI-compatible, and Gemini. The most-requested additions are AWS Bedrock, Google Vertex, and Azure OpenAI. Each adapter lives in `src/nodes/AgentPro/providers/` and implements the `ProviderResponse` contract in `src/nodes/AgentPro/types.ts`.
 2. **`format_final_json_response` forced-tool path** for structured output. This is what n8n's native ToolsAgent V3 does and it's more robust than the current `getFormatInstructions()` + auto-fix pattern. See [n8n's `runAgent.ts`](https://github.com/n8n-io/n8n/blob/master/packages/%40n8n/nodes-langchain/nodes/agents/Agent/agents/ToolsAgent/V3/helpers/runAgent.ts) for the reference implementation.
-3. **Token usage and stop-reason reporting on the tools path.** Currently only the direct path returns `response.usage` and `response.stopReason`. Wiring this in for the tools path likely needs a custom `BaseCallbackHandler` attached to the `AgentExecutor`.
-4. **Tests.** There are none yet. A reasonable starting point is unit tests for the pure functions in `promptBuilder.ts`, `outputParser.ts`, and `modelExtractor.ts`.
+3. **Token usage and stop-reason reporting on the tools path.** Currently only the direct path returns `response.usage` and `response.stopReason`. On the tools path this means reading `usage_metadata` / `response_metadata` off each `AIMessage` returned by the manual tool-calling loop in `toolsAgent.ts` and aggregating it.
+4. **More tests.** A [vitest](https://vitest.dev/) suite now covers `documentInjection.ts` and the tool-calling loop — run it with `npm test`. Good next targets: unit tests for the pure functions in `promptBuilder.ts`, `outputParser.ts`, and `modelExtractor.ts`.
 
 ## Local development
 

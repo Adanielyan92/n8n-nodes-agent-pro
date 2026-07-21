@@ -1,26 +1,39 @@
 {
   "name": "n8n-nodes-agent-pro",
   "version": "3.4.0",
-  "description": "Advanced AI Agent node for n8n with native PDF/image support, structured prompts, fallback models, prompt caching, and provider-agnostic sub-node architecture.",
+  "description": "Advanced n8n AI Agent node for Claude, OpenAI & Gemini — native PDF/image vision, Claude Max (Claude Code OAuth) support, Anthropic prompt caching, structured output with auto-fix, fallback models, and on-demand document fetch.",
   "keywords": [
     "n8n-community-node-package",
     "n8n",
+    "n8n-node",
     "ai",
+    "ai-agent",
     "agent",
     "llm",
     "claude",
     "claude-code",
+    "claude-max",
+    "claude-code-oauth",
     "anthropic",
     "openai",
     "gemini",
     "pdf",
     "vision",
     "multimodal",
+    "structured-output",
     "langchain"
   ],
   "license": "MIT",
   "author": {
     "name": "SquareSigns"
+  },
+  "homepage": "https://github.com/Adanielyan92/n8n-nodes-agent-pro#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adanielyan92/n8n-nodes-agent-pro.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Adanielyan92/n8n-nodes-agent-pro/issues"
   },
   "main": "dist/nodes/AgentPro/AgentPro.node.js",
   "n8n": {

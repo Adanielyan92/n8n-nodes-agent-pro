@@ -65,7 +65,9 @@ All notable changes to this project are documented here. Format roughly follows 
 
 Initial advanced AI agent node for n8n with multi-provider support (Anthropic / OpenAI / Gemini), prompt caching, structured output, fallback model toggle, PDF / image attachment, few-shot examples, and Claude Code OAuth (`sk-ant-oat...`) token detection. See git history (pre-release) for full details.
 
-[3.3.18]: https://github.com/squaresigns/n8n-nodes-agent-pro/releases/tag/v3.3.18
-[3.3.17]: https://github.com/squaresigns/n8n-nodes-agent-pro/releases/tag/v3.3.17
-[3.3.16]: https://github.com/squaresigns/n8n-nodes-agent-pro/releases/tag/v3.3.16
-[3.3.15]: https://github.com/squaresigns/n8n-nodes-agent-pro/releases/tag/v3.3.15
+[3.4.0]: https://github.com/Adanielyan92/n8n-nodes-agent-pro/releases/tag/v3.4.0
+[3.3.19]: https://github.com/Adanielyan92/n8n-nodes-agent-pro/releases/tag/v3.3.19
+[3.3.18]: https://github.com/Adanielyan92/n8n-nodes-agent-pro/releases/tag/v3.3.18
+[3.3.17]: https://github.com/Adanielyan92/n8n-nodes-agent-pro/releases/tag/v3.3.17
+[3.3.16]: https://github.com/Adanielyan92/n8n-nodes-agent-pro/releases/tag/v3.3.16
+[3.3.15]: https://github.com/Adanielyan92/n8n-nodes-agent-pro/releases/tag/v3.3.15
