@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-agent-pro",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "Advanced n8n AI Agent node for Claude, OpenAI & Gemini — native PDF/image vision, Claude Max (Claude Code OAuth) support, Anthropic prompt caching, structured output with auto-fix, fallback models, and on-demand document fetch.",
   "keywords": [
     "n8n-community-node-package",
@@ -64,10 +64,11 @@
     "dist"
   ],
   "peerDependencies": {
+    "@langchain/core": ">=0.3.0",
     "n8n-workflow": "*"
   },
   "dependencies": {
-    "@langchain/core": "^0.3.0"
+    "@langchain/core": ">=0.3.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.18.0",

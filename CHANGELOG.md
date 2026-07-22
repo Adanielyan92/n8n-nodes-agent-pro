@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here. Format roughly follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [3.4.1] – 2026-07-22
+
+### Fixed
+- **Community-node install failure (`ENOENT … ansi-styles/index.js`).** `@langchain/core` was declared only as a runtime `dependency`, so n8n's community-node installer nested a second copy of its tree (including `ansi-styles`) under the package and left it incomplete, breaking load. `@langchain/core` is now also a `peerDependency` (`>=0.3.0`), which tells npm to dedupe to the copy n8n already ships instead of nesting its own — matching the packaging of established LangChain community nodes. No code change.
+
 ## [3.4.0] – 2026-07-08
 
 ### Added
@@ -65,6 +70,7 @@ All notable changes to this project are documented here. Format roughly follows 
 
 Initial advanced AI agent node for n8n with multi-provider support (Anthropic / OpenAI / Gemini), prompt caching, structured output, fallback model toggle, PDF / image attachment, few-shot examples, and Claude Code OAuth (`sk-ant-oat...`) token detection. See git history (pre-release) for full details.
 
+[3.4.1]: https://github.com/Adanielyan92/n8n-nodes-agent-pro/releases/tag/v3.4.1
 [3.4.0]: https://github.com/Adanielyan92/n8n-nodes-agent-pro/releases/tag/v3.4.0
 [3.3.19]: https://github.com/Adanielyan92/n8n-nodes-agent-pro/releases/tag/v3.3.19
 [3.3.18]: https://github.com/Adanielyan92/n8n-nodes-agent-pro/releases/tag/v3.3.18
